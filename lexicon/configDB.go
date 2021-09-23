@@ -30,10 +30,9 @@ func ConnectPsql() {
 	Db = &DB{}
 	Db.conn = conn
 	log.Println("Database connected.")
-
 }
 
-func (t *DB) queryWord(model string, current string) *sql.Rows {
+func (t *DB) QueryWord(model string, current string) *sql.Rows {
 	query := fmt.Sprintf(model, current)
 	r, err := t.conn.Query(query)
 	if err != nil {

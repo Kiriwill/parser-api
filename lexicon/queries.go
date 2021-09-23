@@ -1,5 +1,13 @@
 package lexicon
 
+const BaseQuery string = `
+select 
+	l.categoria,
+	coalesce(l.tipo, '') --to avoid nil exception
+from unidade_lexica u
+inner join lexico l on (l.unidade_lexica = u.id)
+where u.lexema = '%s'`
+
 const GetQuery string = `
 select 
 	l.id,
