@@ -13,7 +13,7 @@ func getLexicon(res http.ResponseWriter, req *http.Request) {
 	word := mux.Vars(req)
 	var words []lexicoModel
 
-	r := Db.queryWord(GetQuery, word["word"])
+	r := Db.QueryWord(GetQuery, word["word"])
 	for r.Next() {
 		l := lexicoModel{}
 		if err := r.Scan(&l.Id, &l.Lexema, &l.Canonica, &l.Class, &l.Forma, &l.Tempo, &l.Tipo, &l.Valor, &l.Flexao); err != nil {
