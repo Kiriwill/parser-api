@@ -5,10 +5,12 @@ import (
 	"fmt"
 	"net/http"
 	"strings"
+
+	"github.com/gorilla/mux"
 )
 
 func processSentence(s string) PARSER {
-	text := strings.Replace(s, ".", "  ", -1)
+	text := s + " "
 	sentence := strings.Split(strings.ToLower(text), " ")
 
 	lexer := LEXER{input: sentence}
@@ -33,14 +35,13 @@ func processSentence(s string) PARSER {
 
 func postSentence(res http.ResponseWriter, req *http.Request) {
 	res.Header().Set("Content-Type", "application/json")
-	var s Sentence
 
-	err := json.NewDecoder(req.Body).Decode(&s)
-	if err != nil {
-		http.Error(res, err.Error(), http.StatusBadRequest)
+	s, found := mux.Vars(req)["sentence"]
+	if !found {
+		http.Error(res, "Incorrect Sentence", http.StatusBadRequest)
 		return
 	}
-	parser := processSentence(s.Sentence)
+	parser := processSentence(s)
 
 	if len(parser.err) != 0 {
 		payload, err := json.MarshalIndent(parser.err, "", "	")
@@ -48,6 +49,13 @@ func postSentence(res http.ResponseWriter, req *http.Request) {
 			http.Error(res, err.Error(), http.StatusBadRequest)
 			return
 		}
+		res.WriteHeader(http.StatusBadRequest)
+		res.Write(payload)
+	} else if parser.lastPos == len(s) {
+		payload, _ := json.MarshalIndent(ERR{
+			Tpe: "string nao chegou até o final",
+		}, "", "	")
+
 		res.WriteHeader(http.StatusBadRequest)
 		res.Write(payload)
 	} else {

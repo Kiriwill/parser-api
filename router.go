@@ -11,6 +11,21 @@ import (
 	"github.com/kiriwill/parser-db-api/parser"
 )
 
+// access control and  CORS middleware
+func accessControlMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT")
+		w.Header().Set("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept")
+
+		if r.Method == "OPTIONS" {
+			return
+		}
+
+		next.ServeHTTP(w, r)
+	})
+}
+
 var Lexicon *mux.Router //capital letter let this be exported
 var Parser *mux.Router  //capital letter let this be exported
 
@@ -18,6 +33,7 @@ func main() {
 	godotenv.Load(".env")
 	lexicon.ConnectPsql()
 	router := mux.NewRouter()
+	router.Use(accessControlMiddleware)
 
 	Lexicon = router.PathPrefix("/lexicon/").Subrouter()
 	Parser = router.PathPrefix("/parser/").Subrouter()
@@ -34,3 +50,6 @@ func main() {
 	log.Fatal(srv.ListenAndServe())
 
 }
+
+// "Access-Control-Allow-Origin", "*");
+// resonse_object.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
