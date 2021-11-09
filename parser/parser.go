@@ -27,7 +27,7 @@ func (t *PARSER) backtrack(currentNode *NODE, current int, tokens []TOKEN) {
 	//backtrack on Tree
 	t.tree = currentNode
 
-	t.tree.Edges = nil //reseta os filhos do nó atual para nil
+	t.tree.Edges = nil //reseta os filho s do nó atual para nil
 
 	//backtrack on Token list
 	t.lexer.currentPos = current
