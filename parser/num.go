@@ -9,12 +9,16 @@ func (t *PARSER) NumP() bool {
 	t.lastPos = current
 
 	if !(t.term("NUM") && t.NP()) {
+
 		t.backtrack(currentNode, current, tokens)
 		if !(t.term("NUM") && t.PP()) {
+
 			t.backtrack(currentNode, current, tokens)
 			return false
 		}
 	}
+
+	t.keepTrack(lastNode)
 	t.tree = lastNode
 
 	return true

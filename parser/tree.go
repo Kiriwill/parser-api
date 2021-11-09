@@ -6,9 +6,10 @@ import (
 )
 
 type NODE struct {
-	Class string  `json:"class"` //SN, SV, SP, SD...
-	Value string  `json:"value"`
-	Edges []*NODE `json:"children"` //{'DET','V'}
+	Class  string  `json:"class"` //SN, SV, SP, SD...
+	Value  string  `json:"value"`
+	Edges  []*NODE `json:"children"` //{'DET','V'}
+	Heigth int     `json:"size"`
 }
 
 func createNode(class string, value string) *NODE {
@@ -18,8 +19,11 @@ func createNode(class string, value string) *NODE {
 			Value: value,
 		}
 	}
+	// fmt.Println("segue para: ", class)
+
 	return &NODE{
-		Class: class,
+		Class:  class,
+		Heigth: 0,
 	}
 }
 

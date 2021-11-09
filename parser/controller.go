@@ -2,12 +2,14 @@ package parser
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"strings"
 
 	"github.com/gorilla/mux"
+	"golang.org/x/time/rate"
 )
+
+var Limiter = rate.NewLimiter(1, 3)
 
 func processSentence(s string) PARSER {
 	text := s + " "
@@ -19,22 +21,37 @@ func processSentence(s string) PARSER {
 	parser := PARSER{lexer: lexer}
 	parser.nextToken()
 
-	if !parser.IP() {
-		parser.err = append(parser.err, ERR{
-			Tpe: "parsing error",
+	isSentenceValid := parser.root()
+
+	if !isSentenceValid {
+		// se chegar no final mas não for valida mostra o que conseguiu
+		parser.err = ERR{
+			Tpe: "parsing",
 			Detail: DetailStr{
-				Position:    parser.lastPos - 1,
-				Description: fmt.Sprintf("invalid sentence on position '%d'", parser.lastPos-1)},
-		})
+				Description: strings.Join(lexer.input[parser.lastPos:], " "),
+				LastTree:    parser.lastTrees,
+				LastTokens:  parser.lexer.tokens,
+			},
+		}
 	}
-	if len(lexer.err) != 0 || len(parser.err) != 0 {
-		parser.err = append(parser.err, lexer.err...)
+	if lexer.err.Tpe != "" {
+		if isSentenceValid { //faltam palavras mas houve processamento de partes da sentença
+			lexer.err.Detail.LastTree = append(parser.lastTrees, *parser.tree)
+			lexer.err.Detail.LastTokens = parser.lexer.tokens
+		} else { //não há o que mostrar porque nem processou
+			lexer.err.Tpe = "critical"
+		}
+		parser.err = lexer.err
 	}
 	return parser
 }
 
 func postSentence(res http.ResponseWriter, req *http.Request) {
 	res.Header().Set("Content-Type", "application/json")
+	if !Limiter.Allow() {
+		http.Error(res, http.StatusText(429), http.StatusTooManyRequests)
+		return
+	}
 
 	s, found := mux.Vars(req)["sentence"]
 	if !found {
@@ -43,7 +60,7 @@ func postSentence(res http.ResponseWriter, req *http.Request) {
 	}
 	parser := processSentence(s)
 
-	if len(parser.err) != 0 {
+	if parser.err.Tpe != "" {
 		payload, err := json.MarshalIndent(parser.err, "", "	")
 		if err != nil {
 			http.Error(res, err.Error(), http.StatusBadRequest)
@@ -51,15 +68,20 @@ func postSentence(res http.ResponseWriter, req *http.Request) {
 		}
 		res.WriteHeader(http.StatusBadRequest)
 		res.Write(payload)
-	} else if parser.lastPos == len(s) {
-		payload, _ := json.MarshalIndent(ERR{
-			Tpe: "string nao chegou até o final",
-		}, "", "	")
+		// }
+		// else if parser.lastPos != len(strings.Split(strings.ToLower(s), " "))+1 {
+		// 	payload, _ := json.MarshalIndent(ERR{
+		// 		Tpe: "complexity",
+		// 		Detail: DetailStr{
+		// 			Position:    parser.lastPos,
+		// 			Description: "O sistema ainda não é capaz de processar sentenças complexas.",
+		// 		}}, "", "	")
 
-		res.WriteHeader(http.StatusBadRequest)
-		res.Write(payload)
+		// 	res.WriteHeader(http.StatusBadRequest)
+		// res.Write(payload)
 	} else {
-		payload, err := json.MarshalIndent(parser.tree, "", "	")
+		result := RESULT{Tree: parser.tree, Tokens: parser.lexer.tokens}
+		payload, err := json.MarshalIndent(result, "", "	")
 		if err != nil {
 			http.Error(res, err.Error(), http.StatusBadRequest)
 			return

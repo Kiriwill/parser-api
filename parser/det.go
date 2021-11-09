@@ -11,24 +11,31 @@ func (t *PARSER) DP() bool {
 	t.lastPos = current
 
 	if !(t.term("D") && t.NP()) {
+
 		t.backtrack(currentNode, current, tokens)
 
 		if !(t.term("D") && t.PossP()) {
+
 			t.backtrack(currentNode, current, tokens)
 
 			if !(t.term("D") && t.NumP()) {
+
 				t.backtrack(currentNode, current, tokens)
 
 				if !(t.NP()) {
+
 					t.backtrack(currentNode, current, tokens)
 
 					if !(t.PossP()) {
+
 						t.backtrack(currentNode, current, tokens)
 
 						if !(t.NumP()) {
+
 							t.backtrack(currentNode, current, tokens)
 
 							if !(t.term("D")) {
+
 								t.backtrack(currentNode, current, tokens)
 								return false
 							}
@@ -41,6 +48,7 @@ func (t *PARSER) DP() bool {
 			}
 		}
 	}
+	t.keepTrack(lastNode)
 	t.tree = lastNode //volta para endereço do pai
 	return true
 }
@@ -48,14 +56,17 @@ func (t *PARSER) DP() bool {
 func (t *PARSER) Dl() bool {
 	lastNode := t.tree // guarda endereço da arvore anterior
 
-	currentNode := t.nextNode("Dl")
+	currentNode := t.nextNode("D'")
 	tokens := t.lexer.tokens
 	current := t.lexer.currentPos
 	t.lastPos = current
 	if !(t.term("D")) {
+
 		t.backtrack(currentNode, current, tokens)
 		return false
 	}
+
+	t.keepTrack(lastNode)
 	t.tree = lastNode
 
 	return true

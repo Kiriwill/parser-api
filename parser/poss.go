@@ -9,15 +9,20 @@ func (t *PARSER) PossP() bool {
 	t.lastPos = current
 
 	if !(t.term("POSS") && t.NP()) {
+
 		t.backtrack(currentNode, current, tokens)
 		if !(t.NP() && t.term("POSS")) {
+
 			t.backtrack(currentNode, current, tokens)
 			if !(t.term("POSS") && t.NumP()) {
+
 				t.backtrack(currentNode, current, tokens)
 				return false
 			}
 		}
 	}
+
+	t.keepTrack(lastNode)
 	t.tree = lastNode
 
 	return true

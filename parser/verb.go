@@ -8,45 +8,60 @@ func (t *PARSER) VP() bool {
 	current := t.lexer.currentPos
 	t.lastPos = current
 	if !t.Vl() {
+
 		t.backtrack(currentNode, current, tokens)
 		return false
 	}
-	t.tree = lastNode
 
+	t.keepTrack(lastNode)
+	t.tree = lastNode
 	return true
 }
 
 func (t *PARSER) Vl() bool {
+	// Toda sentença precisa ter um ou mais verbos
+	// Se eu passei pelo verbo e não encontrei o final da sentença
+	// significa que encontrei um caminho sem volta na árvore
+	// nao há como alguem ter o verbo como complemento,
+	// isto é, abaixo da arvore se não for uma outra sentença
 	lastNode := t.tree // guarda endereço da arvore anterior
 
-	currentNode := t.nextNode("Vl")
+	currentNode := t.nextNode("V'")
 	tokens := t.lexer.tokens
 	current := t.lexer.currentPos
 	t.lastPos = current
-	if !(t.AdvP() && t.Vl()) {
+
+	if !(t.AdvP() && t.Vl()) || (t.lastPos != (len(t.lexer.input) - 1)) {
+
 		t.backtrack(currentNode, current, tokens)
 
-		if !(t.term("V") && t.DP()) {
+		if !(t.term("V") && t.CP()) || t.lastPos != (len(t.lexer.input)-1) {
+
 			t.backtrack(currentNode, current, tokens)
 
-			if !(t.term("V") && t.PP()) {
+			if !(t.term("V") && t.AdvP()) || t.lastPos != (len(t.lexer.input)-1) {
+
 				t.backtrack(currentNode, current, tokens)
 
-				if !(t.term("V") && t.CP()) {
+				if !(t.term("V") && t.AP()) || t.lastPos != (len(t.lexer.input)-1) {
+
 					t.backtrack(currentNode, current, tokens)
 
-					if !(t.term("V") && t.AdvP()) {
+					if !(t.term("V") && t.IP()) || t.lastPos != (len(t.lexer.input)-1) {
+
 						t.backtrack(currentNode, current, tokens)
 
-						if !(t.term("V") && t.AP()) {
+						if !(t.term("V") && t.PP()) || t.lastPos != (len(t.lexer.input)-1) {
+
 							t.backtrack(currentNode, current, tokens)
 
-							if !(t.term("V") && t.IP()) {
+							if !(t.term("V") && t.DP()) || t.lastPos != (len(t.lexer.input)-1) {
+
 								t.backtrack(currentNode, current, tokens)
 
 								if !(t.term("V") && t.Vll()) {
-									t.backtrack(currentNode, current, tokens)
 
+									t.backtrack(currentNode, current, tokens)
 									return false
 								}
 							}
@@ -56,6 +71,8 @@ func (t *PARSER) Vl() bool {
 			}
 		}
 	}
+
+	t.keepTrack(lastNode)
 	t.tree = lastNode
 
 	return true
@@ -64,17 +81,21 @@ func (t *PARSER) Vl() bool {
 func (t *PARSER) Vll() bool {
 	lastNode := t.tree // guarda endereço da arvore anterior
 
-	currentNode := t.nextNode("Vll")
+	currentNode := t.nextNode("V''")
 	tokens := t.lexer.tokens
 	current := t.lexer.currentPos
 	t.lastPos = current
 	if !(t.AdvP() && t.Vll()) {
+
 		t.backtrack(currentNode, current, tokens)
 		if !(t.PP() && t.Vll()) {
+
 			t.backtrack(currentNode, current, tokens)
 			//v'' -> empty
 		}
 	}
+
+	t.keepTrack(lastNode)
 	t.tree = lastNode
 
 	return true

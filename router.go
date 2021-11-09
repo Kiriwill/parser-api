@@ -30,6 +30,7 @@ var Lexicon *mux.Router //capital letter let this be exported
 var Parser *mux.Router  //capital letter let this be exported
 
 func main() {
+
 	godotenv.Load(".env")
 	lexicon.ConnectPsql()
 	router := mux.NewRouter()
