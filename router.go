@@ -52,7 +52,7 @@ func main() {
 		ReadTimeout:  15 * time.Second,
 	}
 
-	log.Fatal(srv.ListenAndServe())
+	log.Fatal("Not connected: ", srv.ListenAndServe())
 
 }
 
