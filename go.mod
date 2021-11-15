@@ -4,6 +4,7 @@ replace github.com/kiriwill/parser-db-api/lexicon => ./lexicon
 
 replace github.com/kiriwill/parser-db-api/parser => ./parser
 
+// +heroku goVersion go1.16
 go 1.16
 
 require (
