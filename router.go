@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -41,6 +42,8 @@ func main() {
 	Parser = router.PathPrefix("/parser/").Subrouter()
 	lexicon.CreateRoutes(Lexicon)
 	parser.CreateRoutes(Parser)
+
+	fmt.Print("PORT: ", os.Getenv("PORT"))
 
 	srv := &http.Server{
 		Handler:      router,
