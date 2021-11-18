@@ -46,7 +46,7 @@ func processSentence(s string) PARSER {
 	parser.nextToken()
 
 	isSentenceValid := parser.root()
-	gotTheEnd := (parser.lastPos >= len(strings.Split(strings.ToLower(s), " "))+1)
+	gotTheEnd := (parser.lastPos >= len(strings.Split(s, " ")))
 
 	if !isSentenceValid || (isSentenceValid && !gotTheEnd && lexer.err.Tpe == "") {
 		// se chegar no final mas não for valida mostra o que conseguiu
