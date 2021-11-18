@@ -49,7 +49,7 @@ func processSentence(s string) PARSER {
 	gotTheEnd := (parser.lastPos >= len(strings.Split(s, " ")))
 
 	if !isSentenceValid || (isSentenceValid && !gotTheEnd && lexer.err.Tpe == "") {
-		// se chegar no final mas não for valida mostra o que conseguiu
+		// se chegar no final mas não for valida mostra o que conseguiu.
 		parser.err = ERR{
 			Tpe: "parsing",
 			Detail: DetailStr{
