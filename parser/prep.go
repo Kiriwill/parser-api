@@ -31,7 +31,7 @@ func (t *PARSER) PPl() bool {
 	if !(t.AdvP() && t.PPl()) {
 
 		t.backtrack(currentNode, current, tokens)
-		if !(t.term("PREP") && t.PP()) {
+		if !(t.term("PREP") && t.DP()) {
 
 			t.backtrack(currentNode, current, tokens)
 			if !(t.term("PREP") && t.AdvP()) {
@@ -40,7 +40,7 @@ func (t *PARSER) PPl() bool {
 				if !(t.term("PREP") && t.CP()) {
 
 					t.backtrack(currentNode, current, tokens)
-					if !(t.term("PREP") && t.DP()) {
+					if !(t.term("PREP") && t.PP()) { //mudei aqui em 18/11/2021 para priorizar os artigos antes das PREP (pra, na, crase, etc)
 
 						t.backtrack(currentNode, current, tokens)
 						if !(t.term("PREP")) {

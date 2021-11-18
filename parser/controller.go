@@ -11,6 +11,30 @@ import (
 
 var Limiter = rate.NewLimiter(1, 3)
 
+func assertNotNull(node *NODE) bool {
+	var left bool
+	if len(node.Edges) == 0 && node.Value == "" {
+		return true
+	}
+	if len(node.Edges) == 1 {
+		left = assertNotNull(node.Edges[0])
+		if left {
+			node.Edges = []*NODE{}
+		}
+	} else if len(node.Edges) == 2 {
+		left = assertNotNull(node.Edges[0])
+		right := assertNotNull(node.Edges[1])
+		if left && right {
+			node.Edges = []*NODE{}
+		} else if left {
+			node.Edges = []*NODE{node.Edges[1]}
+		} else if right {
+			node.Edges = []*NODE{node.Edges[0]}
+		}
+	}
+	return false
+}
+
 func processSentence(s string) PARSER {
 	text := s + " "
 	sentence := strings.Split(strings.ToLower(text), " ")
@@ -22,8 +46,9 @@ func processSentence(s string) PARSER {
 	parser.nextToken()
 
 	isSentenceValid := parser.root()
+	gotTheEnd := (parser.lastPos != len(strings.Split(strings.ToLower(s), " "))+1)
 
-	if !isSentenceValid {
+	if !isSentenceValid || (isSentenceValid && !gotTheEnd && lexer.err.Tpe == "") {
 		// se chegar no final mas não for valida mostra o que conseguiu
 		parser.err = ERR{
 			Tpe: "parsing",
@@ -80,6 +105,7 @@ func postSentence(res http.ResponseWriter, req *http.Request) {
 		// 	res.WriteHeader(http.StatusBadRequest)
 		// res.Write(payload)
 	} else {
+		assertNotNull(parser.tree)
 		result := RESULT{Tree: parser.tree, Tokens: parser.lexer.tokens}
 		payload, err := json.MarshalIndent(result, "", "	")
 		if err != nil {

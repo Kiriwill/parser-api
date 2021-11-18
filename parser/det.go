@@ -1,8 +1,6 @@
 package parser
 
 func (t *PARSER) DP() bool {
-	// passar essa esrtutura para as outras.
-	// usar os ponteiros para ir caminhando na arvore
 	lastNode := t.tree // guarda endereço da arvore anterior
 
 	currentNode := t.nextNode("DP")
