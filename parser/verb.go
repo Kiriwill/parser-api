@@ -35,7 +35,7 @@ func (t *PARSER) Vl() bool {
 
 		t.backtrack(currentNode, current, tokens)
 
-		if !(t.term("V") && t.CP()) || t.lastPos != (len(t.lexer.input)-1) {
+		if !(t.term("V") && t.PP()) || t.lastPos != (len(t.lexer.input)-1) {
 
 			t.backtrack(currentNode, current, tokens)
 
@@ -47,15 +47,15 @@ func (t *PARSER) Vl() bool {
 
 					t.backtrack(currentNode, current, tokens)
 
-					if !(t.term("V") && t.IP()) || t.lastPos != (len(t.lexer.input)-1) {
+					if !(t.term("V") && t.DP()) || t.lastPos != (len(t.lexer.input)-1) {
 
 						t.backtrack(currentNode, current, tokens)
 
-						if !(t.term("V") && t.PP()) || t.lastPos != (len(t.lexer.input)-1) {
+						if !(t.term("V") && t.CP()) || t.lastPos != (len(t.lexer.input)-1) {
 
 							t.backtrack(currentNode, current, tokens)
 
-							if !(t.term("V") && t.DP()) || t.lastPos != (len(t.lexer.input)-1) {
+							if !(t.term("V") && t.IP()) || t.lastPos != (len(t.lexer.input)-1) {
 
 								t.backtrack(currentNode, current, tokens)
 
