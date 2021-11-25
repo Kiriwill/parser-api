@@ -1,6 +1,6 @@
 Sprint 3
 Objetivo: Tela 1 – Tela de busca principal e criação da API para o parser
-    Criação do ambiente Cloud
+    Criação do ambiente Cloud 
     Integração da API Parser com banco de dados
 
 API Parser e DB integradas:
