@@ -6,7 +6,7 @@ Objetivo: Tela 1 – Tela de busca principal e criação da API para o parser
 API Parser e DB integradas:
 https://github.com/Kiriwill/parser-api
 
-Frontend e tela inicial (Tela 1 - Busca por sentença):
+Frontend:
 https://github.com/Kiriwill/parser-front
 
 
