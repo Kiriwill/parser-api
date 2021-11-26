@@ -4,7 +4,8 @@ func (t *PARSER) VP() bool {
 	lastNode := t.tree // guarda endereço da arvore anterior
 
 	currentNode := t.nextNode("VP")
-	tokens := t.lexer.tokens
+	tokens := make([]TOKEN, len(t.lexer.tokens))
+	copy(tokens, t.lexer.tokens)
 	current := t.lexer.currentPos
 	t.lastPos = current
 	if !t.Vl() {
@@ -27,7 +28,8 @@ func (t *PARSER) Vl() bool {
 	lastNode := t.tree // guarda endereço da arvore anterior
 
 	currentNode := t.nextNode("V'")
-	tokens := t.lexer.tokens
+	tokens := make([]TOKEN, len(t.lexer.tokens))
+	copy(tokens, t.lexer.tokens)
 	current := t.lexer.currentPos
 	t.lastPos = current
 
@@ -47,15 +49,15 @@ func (t *PARSER) Vl() bool {
 
 					t.backtrack(currentNode, current, tokens)
 
-					if !(t.term("V") && t.DP()) || t.lastPos != (len(t.lexer.input)-1) {
+					if !(t.term("V") && t.CP()) || t.lastPos != (len(t.lexer.input)-1) {
 
 						t.backtrack(currentNode, current, tokens)
 
-						if !(t.term("V") && t.CP()) || t.lastPos != (len(t.lexer.input)-1) {
+						if !(t.term("V") && t.IP()) || t.lastPos != (len(t.lexer.input)-1) {
 
 							t.backtrack(currentNode, current, tokens)
 
-							if !(t.term("V") && t.IP()) || t.lastPos != (len(t.lexer.input)-1) {
+							if !(t.term("V") && t.DP()) || t.lastPos != (len(t.lexer.input)-1) {
 
 								t.backtrack(currentNode, current, tokens)
 
@@ -82,7 +84,8 @@ func (t *PARSER) Vll() bool {
 	lastNode := t.tree // guarda endereço da arvore anterior
 
 	currentNode := t.nextNode("V''")
-	tokens := t.lexer.tokens
+	tokens := make([]TOKEN, len(t.lexer.tokens))
+	copy(tokens, t.lexer.tokens)
 	current := t.lexer.currentPos
 	t.lastPos = current
 	if !(t.AdvP() && t.Vll()) {

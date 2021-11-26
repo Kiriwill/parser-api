@@ -4,7 +4,8 @@ func (t *PARSER) QP() bool {
 	lastNode := t.tree // guarda endereço da arvore anterior
 
 	currentNode := t.nextNode("QP")
-	tokens := t.lexer.tokens
+	tokens := make([]TOKEN, len(t.lexer.tokens))
+	copy(tokens, t.lexer.tokens)
 	current := t.lexer.currentPos
 	t.lastPos = current
 

@@ -4,7 +4,8 @@ func (t *PARSER) DP() bool {
 	lastNode := t.tree // guarda endereço da arvore anterior
 
 	currentNode := t.nextNode("DP")
-	tokens := t.lexer.tokens
+	tokens := make([]TOKEN, len(t.lexer.tokens))
+	copy(tokens, t.lexer.tokens)
 	current := t.lexer.currentPos
 	t.lastPos = current
 
@@ -46,6 +47,7 @@ func (t *PARSER) DP() bool {
 			}
 		}
 	}
+
 	t.keepTrack(lastNode)
 	t.tree = lastNode //volta para endereço do pai
 	return true
@@ -55,7 +57,8 @@ func (t *PARSER) Dl() bool {
 	lastNode := t.tree // guarda endereço da arvore anterior
 
 	currentNode := t.nextNode("D'")
-	tokens := t.lexer.tokens
+	tokens := make([]TOKEN, len(t.lexer.tokens))
+	copy(tokens, t.lexer.tokens)
 	current := t.lexer.currentPos
 	t.lastPos = current
 	if !(t.term("D")) {

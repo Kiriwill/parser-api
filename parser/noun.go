@@ -4,7 +4,8 @@ func (t *PARSER) NP() bool {
 	lastNode := t.tree // guarda endereço da arvore anterior
 
 	currentNode := t.nextNode("NP")
-	tokens := t.lexer.tokens
+	tokens := make([]TOKEN, len(t.lexer.tokens))
+	copy(tokens, t.lexer.tokens)
 	current := t.lexer.currentPos
 	t.lastPos = current
 
@@ -23,7 +24,8 @@ func (t *PARSER) Nl() bool {
 	lastNode := t.tree // guarda endereço da arvore anterior
 
 	currentNode := t.nextNode("N'")
-	tokens := t.lexer.tokens
+	tokens := make([]TOKEN, len(t.lexer.tokens))
+	copy(tokens, t.lexer.tokens)
 	current := t.lexer.currentPos
 	t.lastPos = current
 
@@ -54,7 +56,8 @@ func (t *PARSER) Nll() bool {
 	lastNode := t.tree // guarda endereço da arvore anterior
 
 	currentNode := t.nextNode("N''")
-	tokens := t.lexer.tokens
+	tokens := make([]TOKEN, len(t.lexer.tokens))
+	copy(tokens, t.lexer.tokens)
 	current := t.lexer.currentPos
 	t.lastPos = current
 

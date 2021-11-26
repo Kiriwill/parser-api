@@ -5,6 +5,7 @@ type PARSER struct {
 	tree      *NODE
 	lastPos   int
 	lastTrees []NODE
+	tokens    []TOKEN
 	err       ERR
 }
 
@@ -55,7 +56,8 @@ func (t *PARSER) nextToken() bool {
 func (t *PARSER) term(token string) bool {
 	for _, v := range t.lexer.currentToken.Classe {
 		if v == token {
-			t.lexer.tokens[t.lexer.currentPos].Classe = []string{token}
+			t.tokens[t.lexer.currentPos].Valor = t.lexer.input[t.lexer.currentPos]
+			t.tokens[t.lexer.currentPos].Classe = []string{token}
 			t.lexer.currentToken.Classe = []string{v}
 			node := createNode(token, t.lexer.input[t.lexer.currentPos])
 			t.tree.appendNode(node)

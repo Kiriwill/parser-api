@@ -4,7 +4,8 @@ func (t *PARSER) AdvP() bool {
 	lastNode := t.tree // guarda endereço da arvore anterior
 
 	currentNode := t.nextNode("AdvP")
-	tokens := t.lexer.tokens
+	tokens := make([]TOKEN, len(t.lexer.tokens))
+	copy(tokens, t.lexer.tokens)
 	current := t.lexer.currentPos
 	t.lastPos = current
 
@@ -23,7 +24,8 @@ func (t *PARSER) Advl() bool {
 	lastNode := t.tree // guarda endereço da arvore anterior
 
 	currentNode := t.nextNode("Adv'")
-	tokens := t.lexer.tokens
+	tokens := make([]TOKEN, len(t.lexer.tokens))
+	copy(tokens, t.lexer.tokens)
 	current := t.lexer.currentPos
 	t.lastPos = current
 
@@ -46,7 +48,8 @@ func (t *PARSER) Advll() bool {
 	lastNode := t.tree // guarda endereço da arvore anterior
 
 	currentNode := t.nextNode("Adv''")
-	tokens := t.lexer.tokens
+	tokens := make([]TOKEN, len(t.lexer.tokens))
+	copy(tokens, t.lexer.tokens)
 	current := t.lexer.currentPos
 	t.lastPos = current
 

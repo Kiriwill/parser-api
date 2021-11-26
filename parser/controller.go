@@ -42,7 +42,8 @@ func processSentence(s string) PARSER {
 	lexer := LEXER{input: sentence}
 	lexer.lexemize()
 
-	parser := PARSER{lexer: lexer}
+	tokens := make([]TOKEN, len(lexer.tokens))
+	parser := PARSER{lexer: lexer, tokens: tokens}
 	parser.nextToken()
 
 	isSentenceValid := parser.root()
@@ -106,7 +107,7 @@ func postSentence(res http.ResponseWriter, req *http.Request) {
 		// res.Write(payload)
 	} else {
 		assertNotNull(parser.tree)
-		result := RESULT{Tree: parser.tree, Tokens: parser.lexer.tokens}
+		result := RESULT{Tree: parser.tree, Tokens: parser.tokens}
 		payload, err := json.MarshalIndent(result, "", "	")
 		if err != nil {
 			http.Error(res, err.Error(), http.StatusBadRequest)
