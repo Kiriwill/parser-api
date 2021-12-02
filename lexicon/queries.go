@@ -2,11 +2,13 @@ package lexicon
 
 const BaseQuery string = `
 select 
+	distinct on (l.categoria)
 	l.categoria,
 	coalesce(l.tipo, '') --to avoid nil exception
 from unidade_lexica u
 inner join lexico l on (l.unidade_lexica = u.id)
-where u.lexema = '%s'`
+where u.lexema = '%s'
+order by l.categoria asc`
 
 const GetQuery string = `
 select 
@@ -61,13 +63,18 @@ const ConComQuery string = `
 select 
 	distinct on (up.lexema)
 	--lp.categoria as "categoria",
-	up.lexema as "palavra"
+	up.lexema as "prefixo",
+	us.lexema as "sufixo"
 	--coalesce(lp.tipo, '') --to avoid nil exception
 from unidade_lexica u
 inner join lexico l on (l.unidade_lexica = u.id)
 left join contracao c on (c.id = l.id)
-left join lexico lp on (lp.id = c.prefixo or lp.id = c.sufixo)
+left join lexico lp on (lp.id = c.prefixo)
+left join lexico ls on (ls.id = c.sufixo)
 left join unidade_lexica up on (up.id = lp.unidade_lexica)
+left join unidade_lexica us on (us.id = ls.unidade_lexica)
 where u.lexema = '%s'
+	and l.categoria = 'CON'
 order by 
-	up.lexema, c.id asc`
+	up.lexema, 
+	c.id desc`

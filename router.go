@@ -1,8 +1,10 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/gorilla/mux"
@@ -30,6 +32,7 @@ var Lexicon *mux.Router //capital letter let this be exported
 var Parser *mux.Router  //capital letter let this be exported
 
 func main() {
+
 	godotenv.Load(".env")
 	lexicon.ConnectPsql()
 	router := mux.NewRouter()
@@ -40,14 +43,16 @@ func main() {
 	lexicon.CreateRoutes(Lexicon)
 	parser.CreateRoutes(Parser)
 
+	fmt.Print("PORT: ", os.Getenv("PORT"))
+
 	srv := &http.Server{
 		Handler:      router,
-		Addr:         "127.0.0.1:8800",
+		Addr:         ":" + os.Getenv("PORT"),
 		WriteTimeout: 15 * time.Second,
 		ReadTimeout:  15 * time.Second,
 	}
 
-	log.Fatal(srv.ListenAndServe())
+	log.Fatal("Not connected: ", srv.ListenAndServe())
 
 }
 

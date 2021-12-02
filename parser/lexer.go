@@ -2,29 +2,27 @@ package parser
 
 import (
 	"database/sql"
-	"log"
 
 	"github.com/kiriwill/parser-db-api/lexicon"
 )
 
 type TOKEN struct {
-	valor  string
-	classe []string
+	Valor  string   `json:"valor"`
+	Classe []string `json:"classe"`
 }
 
 type LEXER struct {
 	input        []string //sentenca de entrada
 	currentPos   int
 	currentToken TOKEN
-	conn         *sql.DB
 	tokens       []TOKEN
-	err          []ERR
+	err          ERR
 }
 
 func (t *LEXER) createToken(classes []string) {
 	elem := TOKEN{
-		valor:  t.input[t.currentPos],
-		classe: classes,
+		Valor:  t.input[t.currentPos],
+		Classe: classes,
 	}
 	t.tokens = append(t.tokens, elem)
 }
@@ -35,33 +33,45 @@ func (t *LEXER) getClasses(r *sql.Rows) []string {
 	var kind string
 	for r.Next() {
 		if err := r.Scan(&class, &kind); err != nil {
-			log.Fatal(err)
-			t.err = append(t.err, ERR{
-				Tpe:    "lexical error",
+			// log.Fatal(err)
+			t.err = ERR{
+				Tpe:    "lexical",
 				Detail: DetailStr{Description: err.Error()},
-			})
+			}
 		}
 		class = t.sintagmaToClass(class, kind)
 		classes = append(classes, class)
 	}
 	if classes == nil && t.input[t.currentPos] != "" {
-		t.err = append(t.err, ERR{
-			Tpe:    "lexical error",
-			Detail: DetailStr{Description: "word '%s' not founded."},
-		})
+		if t.err.Tpe != "" {
+			t.err.Detail.Description = t.err.Detail.Description + ", " + t.input[t.currentPos]
+		} else {
+			t.err = ERR{
+				Tpe: "lexical",
+				Detail: DetailStr{
+					Description: t.input[t.currentPos],
+				},
+			}
+		}
+
 	}
 	return classes
 }
 
 func (t *LEXER) explodeContraction() {
 	var words []string
-	var word string
+	var pref string
+	var suf string
 	r := lexicon.Db.QueryWord(lexicon.ConComQuery, t.input[t.currentPos])
 	for r.Next() {
-		if err := r.Scan(&word); err != nil {
-			log.Fatal(err)
+		if err := r.Scan(&pref, &suf); err != nil {
+			// log.Fatal(err)
+			t.err = ERR{
+				Tpe:    "lexical error",
+				Detail: DetailStr{Description: err.Error()},
+			}
 		}
-		words = append(words, word)
+		words = []string{pref, suf}
 	}
 	t.insertWordOnPosAndOveride(t.currentPos, words[0], words[1])
 }
@@ -115,6 +125,9 @@ func (t *LEXER) sintagmaToClass(class string, kind string) string {
 	}
 	if class == "ART" {
 		return "D"
+	}
+	if class == "CONJ" {
+		return "C"
 	}
 
 	return class
