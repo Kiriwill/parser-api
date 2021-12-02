@@ -116,7 +116,7 @@ func (t *LEXER) sintagmaToClass(class string, kind string) string {
 		case "Dem":
 			return "D"
 		case "Pes":
-			return "D"
+			return "Pess"
 		case "Pos":
 			return "POSS"
 		case "Ind":

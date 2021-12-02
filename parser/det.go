@@ -33,7 +33,7 @@ func (t *PARSER) DP() bool {
 
 							t.backtrack(currentNode, current, tokens)
 
-							if !(t.term("D")) {
+							if !(t.term("Pess")) {
 
 								t.backtrack(currentNode, current, tokens)
 								return false
