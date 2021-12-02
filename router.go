@@ -1,8 +1,10 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/gorilla/mux"
@@ -41,9 +43,11 @@ func main() {
 	lexicon.CreateRoutes(Lexicon)
 	parser.CreateRoutes(Parser)
 
+	fmt.Print("PORT: ", os.Getenv("PORT"))
+
 	srv := &http.Server{
 		Handler:      router,
-		Addr:         "localhost:8800",
+		Addr:         ":" + os.Getenv("PORT"),
 		WriteTimeout: 15 * time.Second,
 		ReadTimeout:  15 * time.Second,
 	}
